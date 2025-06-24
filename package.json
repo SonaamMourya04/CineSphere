@@ -2,7 +2,6 @@
   "name": "cinesphere",
   "version": "1.0.0",
   "description": "A React-based movie website",
-
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build index.html",
@@ -11,12 +10,14 @@
   "author": "Sonam Mourya",
   "license": "ISC",
   "devDependencies": {
-    "parcel": "^2.15.4",
-    "jest": "^29.0.0"
+    "jest": "^29.0.0",
+    "parcel": "^2.15.4"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.10",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.10"
   },
   "browserslist": [
     "last 2 versions",
