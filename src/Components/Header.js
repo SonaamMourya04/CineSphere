@@ -1,17 +1,50 @@
-// Components/Header.js
 import React from 'react';
-import { PlayCircle } from 'lucide-react'; // round icon
+import { PlayCircle } from 'lucide-react';
+import { signOut } from "firebase/auth";
+import { auth } from '../utils/firebase';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { PROFILE_ICON_IMG } from '../utils/Constants';
 
 const Header = () => {
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
+
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        navigate('/');
+      })
+      .catch((error) => {
+        console.error("Sign-out error:", error);
+        navigate('/error');
+      });
+  };
+
   return (
-    <header className="absolute text-white px-6 py-4 flex justify-between items-center z-10">
+    <div className="absolute w-screen bg-gradient-to-b from-black text-white px-6 py-4 flex justify-between items-center z-10">
       {/* Logo Section */}
       <div className="flex items-center space-x-2 text-red-600 font-extrabold text-2xl sm:text-3xl tracking-wide">
         <PlayCircle className="w-8 h-8 text-red-600" />
         <span>Cine<span className="text-white">Sphere</span></span>
       </div>
-    </header>
-    
+
+      {/* Right Side */}
+      <div className='flex items-center'>
+        {user && (
+          <>
+            <img
+              src={user?.photoURL }
+              className="w-10 h-10 rounded-full mr-4"
+              alt="profile icon"
+            />
+            <button onClick={handleSignOut} className="font-bold text-white">
+              Sign out
+            </button>
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 
