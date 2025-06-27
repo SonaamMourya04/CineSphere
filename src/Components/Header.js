@@ -21,7 +21,7 @@ const Header = () => {
         navigate('/');
       })
       .catch((error) => {
-        console.error("Sign-out error:", error);
+       
         navigate('/error');
       });
   };
