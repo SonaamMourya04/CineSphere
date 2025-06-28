@@ -5,6 +5,10 @@ import MovieList from './MovieList'
 const GptMovieSuggestion = () => {
   const { movieResults, movieNames } = useSelector((store) => store.gpt)
 
+  console.log("🎬 GptMovieSuggestion Debug:");
+  console.log("movieNames:", movieNames);
+  console.log("movieResults:", movieResults);
+
   if (!movieNames) return null
 
   return (
@@ -59,4 +63,4 @@ const GptMovieSuggestion = () => {
   )
 }
 
-export default GptMovieSuggestion
+export default GptMovieSuggestion;

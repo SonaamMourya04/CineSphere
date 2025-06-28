@@ -83,7 +83,7 @@ const Login = () => {
             <input
               type="text"
               placeholder="Name"
-              ref={name}                      // 🔧 ref added
+              ref={name}                      //  ref added
               className="w-full p-2 my-2 mb-4 bg-white text-black rounded"
             />
           )}

@@ -14,7 +14,7 @@ const useTopRatedMovies = () => {
 
       dispatch(addTopRatedMovies(json.results));
     };
-    getTopRatedMovies(); // ✅ correct call
+    getTopRatedMovies(); 
   }, []);
 };
 
