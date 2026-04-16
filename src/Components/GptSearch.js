@@ -1,28 +1,18 @@
-import React from 'react';
-import GptSearchBar from './GptSearchBar';
-import GptMovieSuggestion from './GptMovieSuggestion';
-import { GPT_THEME } from '../utils/Constants';
+import BG_URL from "../assets/images/gpt-bg.jpg";
+import GptMovieSuggestions from "./GptMovieSuggestions";
+import GptSearchBar from "./GptSearchBar";
 
-const GptSearch = () => {
+const GPTSearch = () => {
   return (
-    <div className="relative w-full h-screen">
-      {/* Background image */}
-      <img
-        src={GPT_THEME}
-        className="absolute w-full h-full object-cover"
-        alt="background"
-      />
-
-      {/* Optional black overlay for better contrast */}
-      <div className="absolute w-full h-full bg-black opacity-50"></div>
-
-      {/* Content stacked on top */}
-      <div className="absolute top-0 w-full h-full">
-        <GptSearchBar />
-        <GptMovieSuggestion />
+    <>
+      <div className="fixed -z-10">
+        <img className="h-screen object-cover" src={BG_URL} alt="logo" />
       </div>
-    </div>
+      <div className="">
+        <GptSearchBar />
+        <GptMovieSuggestions />
+      </div>
+    </>
   );
 };
-
-export default GptSearch;
+export default GPTSearch;

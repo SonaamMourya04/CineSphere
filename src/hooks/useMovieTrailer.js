@@ -1,28 +1,31 @@
 import { useDispatch } from "react-redux";
+import { useEffect } from "react";
 import { API_OPTIONS } from "../utils/Constants";
 import { addTrailerVideo } from "../utils/MovieSlice";
-import { useEffect } from "react";
 
 const useMovieTrailer = (movieId) => {
   const dispatch = useDispatch();
 
-  // fetch trailer video
   const getMovieVideos = async () => {
-    const data = await fetch(
-      `https://api.themoviedb.org/3/movie/${movieId}/videos?language=en-US`,
-      API_OPTIONS
-    );
-    const json = await data.json();
-  
+    try {
+      const data = await fetch(
+        `https://api.themoviedb.org/3/movie/${movieId}/videos?language=en-US`,
+        API_OPTIONS
+      );
+      const json = await data.json();
 
-    const filterData = json.results.filter(video => video.type === "Trailer");
-    const trailer = filterData.length > 0 ? filterData[0] : json.results[0];
-    dispatch(addTrailerVideo(trailer)); // store trailer in redux
+      const filtered = json.results?.filter((v) => v.type === "Trailer");
+      const trailer = filtered?.length ? filtered[0] : json.results?.[0];
+
+      if (trailer) dispatch(addTrailerVideo(trailer));
+    } catch (err) {
+      console.error("Failed to fetch trailer:", err);
+    }
   };
 
   useEffect(() => {
-    getMovieVideos();
-  }, []);
+    if (movieId) getMovieVideos();
+  }, [movieId]);
 };
 
 export default useMovieTrailer;

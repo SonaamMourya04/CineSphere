@@ -1,96 +1,92 @@
-import {useEffect} from 'react';
-import { PlayCircle } from 'lucide-react';
-import { signOut } from "firebase/auth";
-import { auth } from '../utils/firebase';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { PROFILE_ICON_IMG, SUPPORTED_LANGUAGES } from '../utils/Constants';
-import {onAuthStateChanged } from "firebase/auth";
-import { auth } from '../utils/firebase';
-import { useDispatch } from 'react-redux';
-import { addUser, removeUser } from '../utils/UserSlice';
-import { toggleGptSearchView } from '../utils/gptSlice'; //import toggleGptSearchView action from gptSlice.js file.
-import { changeLanguage } from '../utils/configSlice'; //import changeLanguage action from configSlice.js file.
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { LOGO, SUPPORTED_LANGUAGES } from "../utils/Constants";
+import { auth } from "../utils/firebase";
+import { addUser, removeUser } from "../utils/userSlice";
+import { toggleGptSearchView } from "../utils/gptSlice";
+import { changeLanguage } from "../utils/configSlice";
 
 const Header = () => {
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
-  const showGptSearch=useSelector((store)=>store.gpt.showGptSearch);
-
+  const user = useSelector((store) => store.user);
+  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
   const handleSignOut = () => {
     signOut(auth)
-      .then(() => {
-        navigate('/');
-      })
+      .then(() => {})
       .catch((error) => {
-       
-        navigate('/error');
+        navigate("/error");
       });
   };
-  useEffect(()=>{
-          const unsubscribe = onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // User is signed in
-      const {uid,email,displayName,photoURL} = user;
-     dispatch(addUser({uid:uid,email:email,displayName:displayName,photoURL:photoURL}));
-     navigate("/browse")
-    
-    } else {
-      // User is signed out
-     dispatch(removeUser());
-     navigate("/");
-    
-    }
-  }); //unsubsribre when  the component is unmounts
-  return ()=> unsubscribe();
-      },[]);
-      const handleGptSearchClick=()=>{
-        dispatch(toggleGptSearchView()); //toggle the gpt search view in redux store.
-      } 
-      const handleLanguageChange=(e)=>{
-        dispatch(changeLanguage(e.target.value));
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { uid, email, displayName, photoURL } = user;
+        dispatch(
+          addUser({
+            uid: uid,
+            email: email,
+            displayName: displayName,
+            photoURL: photoURL,
+          })
+        );
+        navigate("/browse");
+      } else {
+        dispatch(removeUser());
+        navigate("/");
       }
+    });
+
+    // Unsiubscribe when component unmounts
+    return () => unsubscribe();
+  }, []);
+
+  const handleGptSearchClick = () => {
+    // Toggle GPT Search
+    dispatch(toggleGptSearchView());
+  };
+
+  const handleLanguageChange = (e) => {
+    dispatch(changeLanguage(e.target.value));
+  };
 
   return (
-    <div className="absolute w-screen bg-gradient-to-b from-black text-white px-6 py-4 flex justify-between items-center z-10">
-      {/* Logo Section */}
-      <div className="flex items-center space-x-2 text-red-600 font-extrabold text-2xl sm:text-3xl tracking-wide">
-        <PlayCircle className="w-8 h-8 text-red-600" />
-        <span>Cine<span className="text-white">Sphere</span></span>
-      </div>
-
-      {/* Right Side */}
-      <div className='flex items-center'>
-        {user && (
-          <>
-          { showGptSearch && <select className='p-2 m-2 bg-black text-white rounded' onChange={handleLanguageChange}>
-            {SUPPORTED_LANGUAGES.map((language) => (
-              <option key={language.identifier} value={language.identifier}>
-                {language.name}
-              </option>
-            ))}
-          
-          </select>}
-
-          <button className='py-2 px-4 m-2 bg-red-800 rounded-2xl mx-4'
-          onClick={handleGptSearchClick}>
-    
-            {showGptSearch ? "Home" : " GPT Search"}
-            </button>
-            <img
-  src={user?.photoURL || PROFILE_ICON_IMG}
-  className="w-10 h-10 rounded-full mr-4"
-  alt="profile icon"
-/>
-            <button onClick={handleSignOut} className="font-bold text-white">
-              Sign out
-            </button>
-          </>
-        )}
-      </div>
+    <div className="absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex flex-col md:flex-row justify-between">
+      <img className="w-44 mx-auto md:mx-0" src={LOGO} alt="logo" />
+      {user && (
+        <div className="flex p-2 justify-between">
+          {showGptSearch && (
+            <select
+              className="p-2 m-2 bg-gray-900 text-white"
+              onChange={handleLanguageChange}
+            >
+              {SUPPORTED_LANGUAGES.map((lang) => (
+                <option key={lang.identifier} value={lang.identifier}>
+                  {lang.name}
+                </option>
+              ))}
+            </select>
+          )}
+          <button
+            className="py-2 px-4 mx-4 my-2 bg-purple-800 text-white rounded-lg"
+            onClick={handleGptSearchClick}
+          >
+            {showGptSearch ? "Homepage" : "GPT Search"}
+          </button>
+          <img
+            className="hidden md:block w-12 h-12"
+            alt="usericon"
+            src={user?.photoURL}
+          />
+          <button onClick={handleSignOut} className="font-bold text-white ">
+            (Sign Out)
+          </button>
+        </div>
+      )}
     </div>
   );
 };
-
 export default Header;

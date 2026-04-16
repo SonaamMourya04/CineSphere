@@ -18,3 +18,8 @@ export const SUPPORTED_LANGUAGES = [{identifier:"en",name:"English"},
                                   {identifier:"hi",name:"Hindi"},
                                   {identifier:"es",name:"Spanish"}];
 export const API_KEY = process.env.REACT_APP_TMDB_API_KEY;
+
+// Add missing exports for components
+export const BG_URL = Background_IMG;
+export const USER_AVATAR = PROFILE_ICON_IMG;
+export const LOGO = "https://upload.wikimedia.org/wikipedia/commons/7/7a/Logonetflix.png";

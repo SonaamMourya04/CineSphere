@@ -9,12 +9,23 @@ const useTopRatedMovies = () => {
 
   useEffect(() => {
     const getTopRatedMovies = async () => {
-      const data = await fetch('https://api.themoviedb.org/3/movie/top_rated?page=1', API_OPTIONS);
-      const json = await data.json();
+      try {
+        const data = await fetch('https://api.themoviedb.org/3/movie/top_rated?page=1', API_OPTIONS);
 
-      dispatch(addTopRatedMovies(json.results));
+        if (!data.ok) {
+          throw new Error(`HTTP error! status: ${data.status}`);
+        }
+
+        const json = await data.json();
+        dispatch(addTopRatedMovies(json.results));
+
+      } catch (error) {
+        console.error('Error fetching top rated movies:', error);
+        // Optionally dispatch an error action or show fallback data
+      }
     };
-    getTopRatedMovies(); 
+
+    getTopRatedMovies();
   }, []);
 };
 

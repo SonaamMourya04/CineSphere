@@ -1,25 +1,17 @@
-import { Play, Info } from 'lucide-react';
-
 const VideoTitle = ({ title, overview }) => {
   return (
-    <div className="absolute w-full aspect-video px-4 sm:px-8 pt-[30%] sm:pt-[20%] text-white bg-gradient-to-b from-black">
-      <h1 className="text-2xl  sm:text-4xl font-bold mb-3 sm:mb-4">{title}</h1>
-      <p className="text-sm sm:text-lg max-w-md sm:max-w-xl mb-4 sm:mb-6">{overview}</p>
-
-      <div className="flex flex-wrap gap-4">
-        <button className="flex items-center px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold rounded">
-          <Play className="w-5 h-5 text-gray-800 mr-2" />
-          Play
+    <div className="w-screen aspect-video pt-[20%] px-6 md:px-24 absolute text-white bg-gradient-to-r from-black">
+      <h1 className="text-2xl md:text-6xl font-bold">{title}</h1>
+      <p className="hidden md:inline-block py-6 text-lg w-1/4">{overview}</p>
+      <div className="my-4 md:m-0">
+        <button className="bg-white text-black py-1 md:py-4 px-3 md:px-12 text-xl rounded-lg hover:bg-opacity-80">
+          ▶️ Play
         </button>
-
-        <button className="flex items-center px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold rounded">
-          <Info className="w-5 h-5 text-gray-800 mr-2" />
+        <button className="hidden md:inline-block mx-2 bg-gray-500 text-white p-4 px-12 text-xl bg-opacity-50 rounded-lg">
           More Info
         </button>
       </div>
     </div>
   );
 };
-
 export default VideoTitle;
-
