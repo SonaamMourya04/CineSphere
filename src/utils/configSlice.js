@@ -3,11 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 const configSlice = createSlice({
   name: "config",
   initialState: {
-    lang: "en" // Default language is English (en)
+    lang: "en",
   },
   reducers: {
     changeLanguage: (state, action) => {
-      state.lang= action.payload;
+      state.lang = action.payload;
     },
   },
 });

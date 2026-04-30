@@ -1,18 +1,20 @@
-import BG_URL from "../assets/images/gpt-bg.jpg";
-import GptMovieSuggestions from "./GptMovieSuggestions";
 import GptSearchBar from "./GptSearchBar";
+import GptMovieSuggestions from "./GptMovieSuggestions";
 
-const GPTSearch = () => {
+const GptSearch = () => {
   return (
     <>
-      <div className="fixed -z-10">
-        <img className="h-screen object-cover" src={BG_URL} alt="logo" />
+      <div className="fixed -z-10 inset-0">
+        <img
+          className="h-full w-full object-cover"
+          src="YOUR_BG_IMAGE_URL"
+          alt="background"
+        />
       </div>
-      <div className="">
-        <GptSearchBar />
-        <GptMovieSuggestions />
-      </div>
+      <GptSearchBar />
+      <GptMovieSuggestions />
     </>
   );
 };
-export default GPTSearch;
+
+export default GptSearch;

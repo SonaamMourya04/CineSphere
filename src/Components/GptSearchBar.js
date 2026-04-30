@@ -1,67 +1,82 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import lang from "../utils/languageConstants";
-import ai from "../utils/Gemini";
-import { API_OPTIONS } from "../utils/Constants";
-import { addGptMovies } from "../utils/gptSlice";
+import lang from "../utils/langConstants";
+import { API_OPTIONS } from "../utils/constants";
+import { addGptMovieResult } from "../utils/gptSlice";
 
 const GptSearchBar = () => {
-  const searchRef = useRef(null);
   const dispatch = useDispatch();
+  const searchText = useRef(null);
   const langKey = useSelector((store) => store.config.lang);
 
-  const searchMovieTMDB = async (movieName) => {
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/search/movie?query=${movieName}&include_adult=false&language=en-US&page=1`,
-        API_OPTIONS
-      );
-      const data = await response.json();
-      return data.results;
-    } catch (error) {
-      console.error("TMDB fetch failed:", error);
-      return [];
-    }
+  const searchMovieTMDB = async (movie) => {
+    const data = await fetch(
+      "https://api.themoviedb.org/3/search/movie?query=" +
+        movie +
+        "&include_adult=false&language=en-US&page=1",
+      API_OPTIONS
+    );
+    const json = await data.json();
+    return json.results;
   };
 
-  const handleGptSearch = async () => {
-    const userInput = searchRef.current.value;
-    if (!userInput) return;
+  const handleGptSearchClick = async () => {
+    const query = searchText.current.value;
+    if (!query) return;
 
-    const prompt = `Act as a movie recommendation system and suggest some movies for the query: "${userInput}". Only give me names of 5 movies, comma separated like: Don, Gadar, Sholay, Dangal, Koi Mil Gaya`;
+    // Gemini API call
+    const geminiResponse = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" +
+        process.env.REACT_APP_GEMINI_KEY,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text:
+                    "Act as a movie recommendation system and suggest some movies for the query: " +
+                    query +
+                    ". Only give me names of 5 movies, comma separated like the example: Gadar, Sholay, Don, Golmaal, Koi Mil Gaya",
+                },
+              ],
+            },
+          ],
+        }),
+      }
+    );
 
-    try {
-      const result = await ai.generateContent(prompt);
-      const responseText = await result.response.text();
+    const geminiData = await geminiResponse.json();
+    const gptMovies =
+      geminiData?.candidates?.[0]?.content?.parts?.[0]?.text?.split(", ");
 
-      const movieNames = responseText.split(",").map((name) => name.trim());
-      const movieResults = await Promise.all(
-        movieNames.map((movie) => searchMovieTMDB(movie))
-      );
+    const promiseArray = gptMovies.map((movie) => searchMovieTMDB(movie));
+    const tmdbResults = await Promise.all(promiseArray);
 
-      dispatch(addGptMovies({ movieNames, movieResults }));
-    } catch (error) {
-      console.error("GPT request failed:", error);
-    }
+    dispatch(
+      addGptMovieResult({ movieNames: gptMovies, movieResults: tmdbResults })
+    );
   };
 
   return (
-    <div className="pt-[30%] md:pt-[10%] flex justify-center">
+    <div className="pt-[45%] md:pt-[10%] flex justify-center">
       <form
-        className="w-full md:w-1/2 bg-black grid grid-cols-12 rounded-lg"
+        className="w-full md:w-1/2 bg-black grid grid-cols-12"
         onSubmit={(e) => e.preventDefault()}
       >
         <input
-          ref={searchRef}
+          ref={searchText}
           type="text"
-          className="p-4 m-4 col-span-9 rounded-lg"
-          placeholder={lang[langKey]?.gptSearchPlaceholder || "Search movies..."}
+          className="p-4 m-4 col-span-9"
+          placeholder={lang[langKey].gptSearchPlaceholder}
         />
         <button
-          className="py-2 px-4 m-4 col-span-3 bg-red-700 text-white rounded-lg"
-          onClick={handleGptSearch}
+          className="col-span-3 m-4 py-2 px-4 bg-red-700 text-white rounded-lg"
+          onClick={handleGptSearchClick}
         >
-          {lang[langKey]?.search || "Search"}
+          {lang[langKey].search}
         </button>
       </form>
     </div>
